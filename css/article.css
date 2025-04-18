@@ -122,6 +122,8 @@ border-bottom: 0px solid #eaecef;}
   .page-container {
       padding: 15px;
       gap: 15px;
+      margin-left: 40px; 
+
   }
   
   .main-content {
@@ -135,6 +137,8 @@ border-bottom: 0px solid #eaecef;}
 
 @media screen and (max-width: 768px) {
   .page-container {
+      flex-direction: column;
+      margin-left: 0px; 
       flex-direction: column;
   }
   
@@ -159,6 +163,7 @@ border-bottom: 0px solid #eaecef;}
 @media screen and (max-width: 480px) {
   .page-container {
       padding: 10px;
+      margin-left: 0;
   }
   
   .article h1 {
