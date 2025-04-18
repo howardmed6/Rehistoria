@@ -1,0 +1,221 @@
+ .nav-wrapper a{
+    
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    overflow-x: hidden;
+  }
+
+.markdown-body {
+    max-width: none !important;
+    min-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .markdown-body h1 {
+   
+    
+    margin-bottom: 0 !important;
+  }
+.header-container {
+    width: 100%;
+    position: relative;
+   
+}
+
+/* Menú superior color café */
+.top-menu {
+    width: 100%;
+    background-color: #a08b76;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    position: relative;
+   
+}
+
+.top-menu h2 {
+    margin-right: 70px;
+}
+
+.banner-title {
+    color: #1da89a;
+    font-size: 2.0rem;
+    font-weight: bold;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  
+}
+
+.logolodeno {
+    font-size: 2.5rem;
+    color: #fff;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  
+    background-color: black;
+    color: white;
+    font-weight: bold;
+  
+    width: 2.5em;
+    height: 2.5em;
+  
+    border-radius: 50%;   
+    
+      
+
+}
+
+
+/* Banner con imagen */
+.banner {
+    width: 100%;
+    height: 142px;
+    position: relative;
+    overflow: hidden;
+}
+
+.banner-image {
+    width: 100%;
+    height: 100%;
+  
+}
+
+/* Navegación inferior negra */
+.nav-wrapper56 {
+    position: relative;
+    height: 40px;
+    
+}
+
+.navigationnav23 {
+    width: 100%;
+    background-color: #000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    color: white;
+    height: 40px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    overflow-x: hidden;
+
+}
+
+.navigationnav23.sticky {
+    position: fixed;
+}
+
+.social-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.social-icon {
+    color: white;
+    font-size: 1.2rem;
+    text-decoration: none;
+}
+
+.menupop {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.menu-item35 {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 5px 10px;
+    transition: color 0.3s;
+}
+
+.menu-item35.active {
+    color: #c9a66b;
+}
+
+.menu-item35:hover {
+    color: #c9a66b;
+}
+
+.search-icon {
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+.mobile-menu-toggle {
+    display: none;
+    color: white;
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.content {
+    padding: 20px;
+    background-color: #f5f0e1;
+    min-height: 100vh;
+}
+
+@media screen and (max-width: 768px) {
+    .top-menu {
+        height: 60px;
+        padding: 0 15px;
+    }
+    
+    .banner-title {
+        font-size: 1.8rem;
+    }
+    
+    .logo {
+        font-size: 2.5rem;
+    }
+    
+    .banner {
+        height: 120px;
+    }
+
+    .mobile-menu-toggle {
+        display: block;
+    }
+
+    .menupop {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #000;
+        flex-direction: column;
+        padding: 20px;
+        gap: 15px;
+    }
+
+    .menupop.active {
+        display: flex;
+    }
+
+    .social-icons {
+        gap: 10px;
+    }
+}

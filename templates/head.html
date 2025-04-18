@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/image/icon.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> 
+    <link rel="stylesheet" href="/css/head.css">
+ 
+
+
+</head>
+<body>
+    <div class="header-container">
+        <!-- Menú superior color café con el título y logo -->
+        <div class="top-menu">
+            <h1 class="banner-title">IMPERIOS Y REINOS</h1>
+            <div class="logolodeno">R</div>
+            <h2>NOTICIAS</h2>
+        </div>
+        
+        <!-- Banner con imagen (sin título) -->
+        <div class="banner">
+            <img src="/image/logo3.jpg" alt="Historic City View" class="banner-image">
+        </div>
+        
+        <!-- Navegación negra inferior -->
+        <div class="nav-wrapper56" id="navWrapper56">
+            <nav class="navigationnav23" id="mainNav">
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                </div>
+                <button class="mobile-menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="menupop" id="mainMenu">
+                    <li><a href="#" class="menu-item35 active">HISTORIA</a></li>
+                    
+                    <li><a href="#" class="menu-item35">CIENCIA</a></li>
+                    <li><a href="#" class="menu-item35">DEPORTES</a></li>
+                    <li><a href="#" class="menu-item35">LITERATURA</a></li>
+                    <li><a href="#" class="menu-item35">TECNOLOGÌA</a></li>
+                    <li><a href="#" class="menu-item35">CINE Y MÚSICA</a></li>
+                 
+                </ul>
+                <div class="search-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <script>// JavaScript para el menú móvil
+        document.getElementById('menuToggle').addEventListener('click', function() {
+           document.getElementById('mainMenu').classList.toggle('active');
+       });
+   
+       // Función para el comportamiento sticky del menú
+       window.addEventListener('scroll', function() {
+           const nav = document.getElementById('mainNav');
+           const navWrapper = document.getElementById('navWrapper56');
+           const navPosition = navWrapper.getBoundingClientRect().top;
+           
+           if (navPosition <= 0) {
+               nav.classList.add('sticky');
+           } else {
+               nav.classList.remove('sticky');
+           }
+       });</script>
+
+
+</body>
+</html>

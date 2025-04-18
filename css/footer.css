@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Are+You+Serious&display=swap');
+
+/* HTML y body ocupan todo el alto  
+html, body {   
+  height: 100%;   
+  margin: 0;   
+  padding: 0;   
+  font-family: sans-serif; 
+}*/  
+
+/* body {   
+  display: flex;   
+  flex-direction: column;   
+  min-height: 100vh; /* Usa viewport height para asegurar altura mínima  
+}    
+*/  
+
+/* Contenido ocupa todo el espacio disponible  
+.contenido {   
+  flex: 1; /* Hace que el contenido ocupe todo el espacio disponible  
+} */ 
+
+/* Footer fijo abajo */ 
+.footer {   
+  width: 100%;   
+  min-height: 42px; /* Cambiado de height a min-height para permitir crecimiento */      
+  display: flex;   
+  align-items: center;   
+  justify-content: center;   
+  padding: 10px 20px; /* Aumentado el padding vertical para dar más espacio */   
+  box-sizing: border-box;   
+  margin-top: auto; /* Ayuda a empujar el footer hacia abajo */   
+  position: relative; /* Para posicionar elementos dentro del footer */   
+  overflow: hidden; /* Para que la imagen no desborde */ 
+}  
+
+.footer a {     
+  font-family: 'Are You Serious', cursive;     
+  font-size: 26px;     
+  color: #432000;     
+  text-align: center; 
+}  
+
+/* Estilo para la imagen de fondo */ 
+.footer-background {   
+  position: absolute;   
+  top: 0;   
+  left: 0;   
+  width: 100%;   
+  height: 100%;   
+  z-index: -1; /* Coloca la imagen detrás del contenido */   
+  object-fit: cover; /* Asegura que la imagen cubra todo el espacio */ 
+}  
+
+.footer-content {   
+  position: relative; /* Para que esté por encima de la imagen */   
+  z-index: 1;
+  width: 100%; /* Asegura que ocupe todo el ancho disponible */
+}
+
+.footer-content p {
+  margin: 0;
+  text-align: center;
+  flex-wrap: wrap; /* Permite que el texto se envuelva */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px; /* Espacio entre elementos cuando se envuelven */
+}  
+
+.footer a {   
+  color: #432000;   
+  text-decoration: none;   
+  margin: 0 6px; 
+}  
+
+.footer a:hover {   
+  text-decoration: underline; 
+}
+
+/* Media queries para dispositivos responsive */
+@media screen and (max-width: 768px) {
+  /* Tablets */
+  .footer {
+    padding: 15px 20px;
+  }
+  
+  .footer-content p {
+    line-height: 1.6;
+    flex-direction: column;
+  }
+  
+  .footer a {
+    margin: 3px 0;
+    font-size: 22px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  /* Teléfonos móviles */
+  .footer {
+    padding: 15px 10px;
+  }
+  
+  .footer-content p {
+    flex-direction: column;
+  }
+  
+  .footer a {
+    margin: 5px 0;
+    font-size: 20px;
+  }
+}
