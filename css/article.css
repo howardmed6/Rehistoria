@@ -96,7 +96,7 @@ border-bottom: 0px solid #eaecef;}
   
   min-height: 300px;
   padding: 20px;
-  
+  background-color: aqua;
   flex-grow: 0;
 }
 
