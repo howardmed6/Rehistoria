@@ -32,6 +32,15 @@ border-bottom: 0px solid #eaecef;}
   line-height: 1.8;
   margin-bottom: 20px;
 }
+.article em{
+
+  text-align: center;
+  font-family: Alegraya Sans SC;
+  color: black;
+  font-size: 20px;
+
+
+}
 
 .article strong {
   font-weight: 700;
