@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="/image/icon.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/css/head.css">
- 
-
-
 </head>
 <body>
     <div class="header-container">
@@ -38,13 +35,11 @@
                 </button>
                 <ul class="menupop" id="mainMenu">
                     <li><a href="#" class="menu-item35 active">HISTORIA</a></li>
-                    
                     <li><a href="#" class="menu-item35">CIENCIA</a></li>
                     <li><a href="#" class="menu-item35">DEPORTES</a></li>
                     <li><a href="#" class="menu-item35">LITERATURA</a></li>
                     <li><a href="#" class="menu-item35">TECNOLOGÌA</a></li>
                     <li><a href="#" class="menu-item35">CINE Y MÚSICA</a></li>
-                 
                 </ul>
                 <div class="search-icon">
                     <i class="fas fa-search"></i>
@@ -53,24 +48,24 @@
         </div>
     </div>
 
-    <script>// JavaScript para el menú móvil
+    <script>
+        // JavaScript para el menú móvil
         document.getElementById('menuToggle').addEventListener('click', function() {
-           document.getElementById('mainMenu').classList.toggle('active');
-       });
-   
-       // Función para el comportamiento sticky del menú
-       window.addEventListener('scroll', function() {
-           const nav = document.getElementById('mainNav');
-           const navWrapper = document.getElementById('navWrapper56');
-           const navPosition = navWrapper.getBoundingClientRect().top;
-           
-           if (navPosition <= 0) {
-               nav.classList.add('sticky');
-           } else {
-               nav.classList.remove('sticky');
-           }
-       });</script>
-
-
+            document.getElementById('mainMenu').classList.toggle('active');
+        });
+        
+        // Función para el comportamiento sticky del menú
+        window.addEventListener('scroll', function() {
+            const nav = document.getElementById('mainNav');
+            const navWrapper = document.getElementById('navWrapper56');
+            const navPosition = navWrapper.getBoundingClientRect().top;
+            
+            if (navPosition <= 0) {
+                nav.classList.add('sticky');
+            } else {
+                nav.classList.remove('sticky');
+            }
+        });
+    </script>
 </body>
 </html>

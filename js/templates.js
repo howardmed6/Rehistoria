@@ -21,10 +21,15 @@ const loadCSS = (href) => {
 };
 
 // Función para evaluar scripts en línea
+// Modificar esta función en tu código
 const evalInlineScript = (scriptContent) => {
-  const script = document.createElement('script');
-  script.textContent = scriptContent;
-  document.body.appendChild(script);
+  try {
+    // Usar Function constructor para crear un scope limpio
+    // pero manteniendo acceso al scope global
+    new Function(scriptContent)();
+  } catch (error) {
+    console.error('Error evaluando script:', error);
+  }
 };
 
 // Función para cargar scripts de manera asíncrona
