@@ -1,23 +1,2 @@
 
 
-# Configuración de build segura
-safe: true
-strict_front_matter: true
-plugins:
-  - jekyll-feed
-  - jekyll-seo-tag
-
-
-# Rutas de inclusión CORREGIDAS (según tu estructura real)
-include:
-  # Artículos y contenido
-  - "articles/**/*.html"
-  - "articles/**/*.md"
-
-# Excluir elementos innecesarios
-exclude:
-  - "github/workflows/*"
-  - "*.sql"
-  - "*.gem"
-  - "node_modules"
-
