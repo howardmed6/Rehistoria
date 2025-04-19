@@ -32,14 +32,35 @@ html, body {
   margin-top: auto; /* Ayuda a empujar el footer hacia abajo */   
   position: relative; /* Para posicionar elementos dentro del footer */   
   overflow: hidden; /* Para que la imagen no desborde */ 
+  text-decoration: none !important;
 }  
+
+p  {
+  text-decoration: none;
+}
 
 .footer a {     
   font-family: 'Are You Serious', cursive;     
-  font-size: 26px;     
-  color: #432000;     
+  font-size: 20px;     
+  color: #000000;     
   text-align: center; 
+  text-emphasis: none;
+  margin: 0 6px; 
 }  
+
+.footer a:hover{
+  color:blueviolet;
+  text-decoration: none;
+}
+
+.nodecora{
+  text-decoration: none;
+}
+a, a:hover, a:visited, a:active, a:focus {
+  text-decoration: none !important;
+  
+}
+
 
 /* Estilo para la imagen de fondo */ 
 .footer-background {   
@@ -69,16 +90,6 @@ html, body {
   gap: 5px; /* Espacio entre elementos cuando se envuelven */
 }  
 
-.footer a {   
-  color: #432000;   
-  text-decoration: none;   
-  margin: 0 6px; 
-}  
-
-.footer a:hover {   
-  text-decoration: underline; 
-}
-
 /* Media queries para dispositivos responsive */
 @media screen and (max-width: 768px) {
   /* Tablets */
@@ -95,6 +106,11 @@ html, body {
     margin: 3px 0;
     font-size: 22px;
   }
+
+  a, a:hover, a:visited, a:active, a:focus {
+  text-decoration: none !important;
+  
+}
 }
 
 @media screen and (max-width: 480px) {
@@ -110,5 +126,8 @@ html, body {
   .footer a {
     margin: 5px 0;
     font-size: 20px;
+  }a, a:hover, a:visited, a:active, a:focus {
+    text-decoration: none !important;
+    
   }
 }
