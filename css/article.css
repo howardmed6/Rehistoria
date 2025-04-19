@@ -80,6 +80,8 @@ border-bottom: 0px solid #eaecef;}
 }
 
 
+.datoip
+  { font-style: italic; }
 
 .main-content {
   flex: 3;

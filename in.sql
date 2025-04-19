@@ -13,15 +13,15 @@ INSERT INTO articulos (
   content
 ) VALUES (
   'none',
-  'La formación de la Tierra, eón Fanerozoico: la era Mesozoica y las especies del Periodo Triásico, Jurásico y Cretácico',
-  '/la-formacion-de-la-tierra-fanerozoico-era-mesozoica-especies-triasico-jurasico-cretacico/',
+  'La formación de la Tierra, eón Fanerozoico: la era Cenozoica y el surgimiento de los mamíferos',
+  '/la-formacion-de-la-tierra-fanerozoico-era-cenozoica-surgimiento-mamiferos/',
   'Howard Medina',
   '2025-04-18',
-  'https://res.cloudinary.com/dpj17zdr2/image/upload/v1745024251/66003874-siluetas-de-dinosaurios-del-periodo-cretacico-de-la-era-mesozoica-con-nombres_gygkty.jpg',
-  'Un recorrido por la era Mesozoica, desde los primeros dinosaurios del Triásico hasta la gran extinción que marcó el fin del Cretácico.',
-  'El eón Fanerozoico y la era Mesozoica: el dominio de los dinosaurios | Relatatoria',
-  'Descubre cómo evolucionaron y dominaron los dinosaurios durante la era Mesozoica, desde los primeros arcosaurios hasta la extinción masiva causada por el impacto del meteorito hace 65 millones de años.',
-  'Representación de la vida durante la era Mesozoica',
+  'https://res.cloudinary.com/dpj17zdr2/image/upload/v1745023943/ANIMALES-DE-LA-ERA-CENOZOICA-1024x682_nkcljx.jpg',
+  'Un recorrido por la era Cenozoica, desde los primeros mamíferos tras la extinción de los dinosaurios hasta el surgimiento de los homínidos y la evolución humana.',
+  'El eón Fanerozoico y la era Cenozoica: el surgimiento de los mamíferos | Relatatoria',
+  'Descubre cómo evolucionaron y dominaron los mamíferos durante la era Cenozoica, desde los pequeños supervivientes de la extinción masiva hasta el surgimiento de los homínidos y la evolución humana.',
+  'Representación de la vida durante la era Cenozoica',
   'Contenido completo del artículo aquí...'
 );
 
@@ -31,12 +31,12 @@ INSERT INTO categorias (name) VALUES ('Ciencia'), ('Historia'), ('Especial') ON 
 -- Paso 3: Relacionar el artículo con sus categorías
 INSERT INTO articulo_categoria (articulo_id, categoria_id)
 VALUES (
-  (SELECT id FROM articulos WHERE permalink = '/la-formacion-de-la-tierra-fanerozoico-era-mesozoica-especies-triasico-jurasico-cretacico/'),
+  (SELECT id FROM articulos WHERE permalink = '/la-formacion-de-la-tierra-fanerozoico-era-cenozoica-surgimiento-mamiferos/'),
   (SELECT id FROM categorias WHERE name = 'Ciencia')
 ), (
-  (SELECT id FROM articulos WHERE permalink = '/la-formacion-de-la-tierra-fanerozoico-era-mesozoica-especies-triasico-jurasico-cretacico/'),
+  (SELECT id FROM articulos WHERE permalink = '/la-formacion-de-la-tierra-fanerozoico-era-cenozoica-surgimiento-mamiferos/'),
   (SELECT id FROM categorias WHERE name = 'Historia')
 ), (
-  (SELECT id FROM articulos WHERE permalink = '/la-formacion-de-la-tierra-fanerozoico-era-mesozoica-especies-triasico-jurasico-cretacico/'),
+  (SELECT id FROM articulos WHERE permalink = '/la-formacion-de-la-tierra-fanerozoico-era-cenozoica-surgimiento-mamiferos/'),
   (SELECT id FROM categorias WHERE name = 'Especial')
 );
