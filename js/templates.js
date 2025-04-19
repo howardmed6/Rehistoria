@@ -1,85 +1,82 @@
+/* component-loader.js */
+// Asegúrate de definir BASE_PATH antes de usarlo
+const BASE_PATH = window.BASE_PATH || '';
 
-
-// Función para cargar CSS de manera asíncrona
-const loadCSS = (href) => {
+/**
+ * Carga un CSS de forma asíncrona en un target (document.head o shadowRoot)
+ */
+const loadCSS = (href, targetRoot = document.head) => {
   return new Promise((resolve, reject) => {
-    const fullHref = href.startsWith('http') ? href : `${BASE_PATH}${href.startsWith('/') ? '' : '/'}${href}`;
-    
-    // Verificar si el CSS ya está cargado
-    if (document.querySelector(`link[href="${fullHref}"]`)) {
+    const fullHref = href.startsWith('http')
+      ? href
+      : `${BASE_PATH}${href.startsWith('/') ? '' : '/'}${href}`;
+
+    if (targetRoot.querySelector(`link[href="${fullHref}"]`)) {
       resolve();
       return;
     }
-    
+
     const link = document.createElement('link');
     link.rel = 'stylesheet';
     link.href = fullHref;
     link.onload = () => resolve();
     link.onerror = () => reject(new Error(`No se pudo cargar el CSS: ${fullHref}`));
-    document.head.appendChild(link);
+    targetRoot.appendChild(link);
   });
 };
 
-// Función para evaluar scripts en línea
-// Modificar esta función en tu código
+/**
+ * Evalúa contenido de script en línea en el contexto global
+ */
 const evalInlineScript = (scriptContent) => {
   try {
-    // Usar Function constructor para crear un scope limpio
-    // pero manteniendo acceso al scope global
     new Function(scriptContent)();
   } catch (error) {
-    console.error('Error evaluando script:', error);
+    console.error('Error evaluando script en línea:', error);
   }
 };
 
-// Función para cargar scripts de manera asíncrona
+/**
+ * Carga un <script> (externo o en línea) y espera a que termine
+ */
 const loadScript = (scriptElement) => {
   return new Promise((resolve) => {
-    // Para scripts con src (externos)
-    if (scriptElement.src || scriptElement.getAttribute('src')) {
+    const src = scriptElement.getAttribute('src') || scriptElement.src;
+    if (src) {
       const newScript = document.createElement('script');
-      
-      // Copiar todos los atributos
       Array.from(scriptElement.attributes).forEach(attr => {
         newScript.setAttribute(attr.name, attr.value);
       });
-      
-      // Si es una ruta relativa y no comienza con http, añadir BASE_PATH
       if (newScript.src && !newScript.src.startsWith('http') && !newScript.src.startsWith('//')) {
-        const srcAttr = newScript.getAttribute('src');
-        newScript.setAttribute('src', `${BASE_PATH}${srcAttr.startsWith('/') ? '' : '/'}${srcAttr}`);
+        const relative = scriptElement.getAttribute('src');
+        newScript.src = `${BASE_PATH}${relative.startsWith('/') ? '' : '/'}${relative}`;
       }
-      
       newScript.onload = resolve;
-      newScript.onerror = resolve; // Continuamos incluso si hay error
+      newScript.onerror = resolve;
       document.body.appendChild(newScript);
-    } 
-    // Para scripts en línea
-    else {
-      try {
-        // Evaluamos el contenido del script
-        evalInlineScript(scriptElement.textContent);
-      } catch (error) {
-        console.error('Error al ejecutar script en línea:', error);
-      }
-      // Resolvemos inmediatamente después de la evaluación
+    } else {
+      evalInlineScript(scriptElement.textContent);
       setTimeout(resolve, 0);
     }
   });
 };
 
-// Función mejorada para cargar recursos de componentes
+/**
+ * Carga primero todos los <link> y luego los <script> de un template
+ */
 const loadComponentResources = async (componentElement) => {
   try {
-    // 1. Cargar todos los estilos primero y esperar a que terminen
+    // Target = shadowRoot si existe, sino document.head
+    const targetRoot = componentElement.shadowRoot || document.head;
+
+    // Cargar estilos
     const styles = componentElement.querySelectorAll('link[rel="stylesheet"]');
-    const stylePromises = Array.from(styles).map(link => 
-      loadCSS(link.getAttribute('href'))
+    const stylePromises = Array.from(styles).map(link =>
+      loadCSS(link.getAttribute('href'), targetRoot)
     );
-    
     await Promise.all(stylePromises);
-    
-    // 2. Cargar scripts en orden secuencial para respetar dependencias
+
+    // Cargar scripts en orden
     const scripts = componentElement.querySelectorAll('script');
     for (const script of Array.from(scripts)) {
       await loadScript(script);
@@ -89,130 +86,102 @@ const loadComponentResources = async (componentElement) => {
   }
 };
 
-// Función para procesar componentes HTML
+/**
+ * Inserta contenido clonado (template.content) en el elemento (puede ser shadowRoot)
+ */
 const processComponent = async (element, templateContent) => {
-  // Limpiar el contenido actual
-  element.innerHTML = '';
-  
-  // Clonar el contenido antes de insertarlo
+  const root = element.shadowRoot || element;
+  root.innerHTML = '';
   const clone = templateContent.cloneNode(true);
-  
-  // Insertar el contenido clonado
-  element.appendChild(clone);
-  
-  // Extraer y ejecutar scripts en línea
-  const inlineScripts = Array.from(element.querySelectorAll('script')).filter(script => !script.src);
-  inlineScripts.forEach(script => {
-    // Crear un nuevo script y evaluarlo
-    const newScript = document.createElement('script');
-    newScript.textContent = script.textContent;
-    document.body.appendChild(newScript);
-    
-    // Opcional: eliminar el script original para evitar duplicidad
-    script.parentNode.removeChild(script);
-  });
+  root.appendChild(clone);
 };
 
-// Componente para el head
+/**
+ * Componente <site-head> aislado con Shadow DOM
+ */
 class SiteHead extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
+
   async connectedCallback() {
     try {
-      // Mostrar indicador de carga si es necesario
-      this.innerHTML = '<div>Cargando encabezado...</div>';
-      
-      const response = await fetch(`/templates/head.html`);
-      if (!response.ok) {
-        throw new Error(`No se pudo cargar head.html: ${response.statusText}`);
-      }
-      
+      this.shadowRoot.innerHTML = '<div>Cargando encabezado...</div>';
+      const response = await fetch(`${BASE_PATH}/templates/head.html`);
+      if (!response.ok) throw new Error(`No se pudo cargar head.html: ${response.statusText}`);
       const html = await response.text();
-      
-      // Usar template para procesar correctamente
       const template = document.createElement('template');
       template.innerHTML = html;
-      
-      // Cargar recursos antes de insertar el contenido
       await loadComponentResources(template.content);
-      
-      // Procesar el componente
       await processComponent(this, template.content);
     } catch (error) {
       console.error('Error cargando el encabezado:', error);
-      this.innerHTML = '<div>Error al cargar el encabezado</div>';
+      this.shadowRoot.innerHTML = '<div>Error al cargar el encabezado</div>';
     }
   }
 }
 
-// Componente para el footer
+/**
+ * Componente <site-footer> aislado con Shadow DOM
+ */
 class SiteFooter extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
+
   async connectedCallback() {
     try {
-      // Mostrar indicador de carga si es necesario
-      this.innerHTML = '<div>Cargando pie de página...</div>';
-      
-      const response = await fetch(`/templates/footer.html`);
-      if (!response.ok) {
-        throw new Error(`No se pudo cargar footer.html: ${response.statusText}`);
-      }
-      
+      this.shadowRoot.innerHTML = '<div>Cargando pie de página...</div>';
+      const response = await fetch(`${BASE_PATH}/templates/footer.html`);
+      if (!response.ok) throw new Error(`No se pudo cargar footer.html: ${response.statusText}`);
       const html = await response.text();
-      
       const template = document.createElement('template');
       template.innerHTML = html;
-      
-      // Cargar recursos antes de insertar el contenido
       await loadComponentResources(template.content);
-      
-      // Procesar el componente
       await processComponent(this, template.content);
     } catch (error) {
       console.error('Error cargando el pie de página:', error);
-      this.innerHTML = '<div>Error al cargar el pie de página</div>';
+      this.shadowRoot.innerHTML = '<div>Error al cargar el pie de página</div>';
     }
   }
 }
 
-// Componente genérico para incluir cualquier HTML
+/**
+ * Componente <html-include src="..."> aislado con Shadow DOM
+ */
 class HTMLInclude extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
+
   async connectedCallback() {
     try {
-      // Obtener la ruta del atributo src
       const src = this.getAttribute('src');
-      if (!src) {
-        throw new Error('El atributo src es obligatorio para html-include');
-      }
-      
-      // Mostrar indicador de carga
-      this.innerHTML = '<div>Cargando contenido...</div>';
-      
+      if (!src) throw new Error('El atributo src es obligatorio para html-include');
+      this.shadowRoot.innerHTML = '<div>Cargando contenido...</div>';
       const response = await fetch(`${BASE_PATH}${src.startsWith('/') ? '' : '/'}${src}`);
-      if (!response.ok) {
-        throw new Error(`No se pudo cargar ${src}: ${response.statusText}`);
-      }
-      
+      if (!response.ok) throw new Error(`No se pudo cargar ${src}: ${response.statusText}`);
       const html = await response.text();
-      
       const template = document.createElement('template');
       template.innerHTML = html;
-      
-      // Cargar recursos antes de insertar el contenido
       await loadComponentResources(template.content);
-      
-      // Procesar el componente
       await processComponent(this, template.content);
     } catch (error) {
       console.error('Error cargando incluido HTML:', error);
-      this.innerHTML = '<div>Error al cargar el contenido</div>';
+      this.shadowRoot.innerHTML = '<div>Error al cargar el contenido</div>';
     }
   }
 }
 
-// Registrar componentes
+// Registramos los componentes
 customElements.define('site-head', SiteHead);
 customElements.define('site-footer', SiteFooter);
 customElements.define('html-include', HTMLInclude);
 
-// Notificar cuando todos los componentes están cargados
+// Aviso de que todo está listo
 window.addEventListener('DOMContentLoaded', () => {
-  console.log('Todos los componentes web están registrados y listos para usar');
+  console.log('Componentes web registrados y listos');
 });
