@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artículos Especiales - Rehistoria</title>
+    <style>
+        /* Estilos específicos para la sección de artículos especiales */
+        .special-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        .special-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -15px;
+            margin-left: -15px;
+            margin-bottom: 15px;
+        }
+        
+        .special-col-5 {
+            flex: 0 0 20%;
+            max-width: 20%;
+            padding: 0 15px;
+            margin-bottom: 30px;
+        }
+        
+        .special-col-4 {
+            flex: 0 0 25%;
+            max-width: 25%;
+            padding: 0 15px;
+            margin-bottom: 30px;
+        }
+        
+        .special-col-3 {
+            flex: 0 0 33.333333%;
+            max-width: 33.333333%;
+            padding: 0 15px;
+            margin-bottom: 30px;
+        }
+        
+        .special-card {
+            border-radius: 8px;
+            overflow: hidden;
+            height: 100%;
+            transition: transform 0.3s;
+            background: white;
+        }
+        
+        .special-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .special-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        
+        .special-info {
+            padding: 15px;
+        }
+        
+        .special-badge {
+            font-size: 12px;
+            color: #1a73e8;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .special-title {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 8px;
+            min-height: 70px;
+        }
+        
+        .special-meta {
+            font-size: 12px;
+            color: #777;
+            display: flex;
+            align-items: center;
+        }
+        
+        .special-link {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .special-loader {
+            text-align: center;
+            padding: 50px;
+            font-size: 20px;
+        }
+        
+        .special-error {
+            text-align: center;
+            padding: 30px;
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        /* Estilos responsivos */
+        @media (max-width: 992px) {
+            .special-col-5, .special-col-4 {
+                flex: 0 0 33.333333%;
+                max-width: 33.333333%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .special-col-5, .special-col-4, .special-col-3 {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+            
+            .special-title {
+                min-height: auto;
+            }
+            
+            .special-img {
+                height: 160px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .special-col-5, .special-col-4, .special-col-3 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="special-top"></div>
+    
+    <!-- Main Content -->
+    <main class="special-container">
+        <div id="special-articles">
+            <div class="special-loader">Cargando artículos especiales...</div>
+        </div>
+    </main>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const articlesContainer = document.getElementById('special-articles');
+            const BASE_URL = 'https://www.rehistoria.com';
+            const BORDER_COLORS = [
+                '#FF5733', // Rojo
+                '#33A1FF', // Azul
+                '#33FF57', // Verde
+                '#FF33D1', // Rosa
+                '#FFC233', // Amarillo
+                '#9B33FF', // Morado
+                '#33FFE6', // Turquesa
+                '#FF9633', // Naranja
+                '#4B3300', // Marrón
+                '#666666', // Gris
+                '#5E2D0C', // Marrón oscuro
+                '#1A5276'  // Azul oscuro
+            ];
+            
+            // Configuración de Supabase
+            const SUPABASE_URL = 'https://hkvkwwxwrkxckmxmvcdl.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhrdmt3d3h3cmt4Y2tteG12Y2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ5MDg3MjIsImV4cCI6MjA2MDQ4NDcyMn0.dxOFrOk5GhGJnypRN7TtMcue2TbG-KchsF8WMTVAWNM';
+            
+            // Función para mostrar errores
+            function showError(message) {
+                articlesContainer.innerHTML = `
+                    <div class="special-error">
+                        Error: ${message}
+                    </div>
+                `;
+                console.error('Error:', message);
+            }
+            
+            // Función para mostrar los artículos con la disposición solicitada
+            function displayArticles(articles) {
+                if (!articles || articles.length === 0) {
+                    articlesContainer.innerHTML = `
+                        <div class="special-error">
+                            No se encontraron artículos de la categoría Especial.
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let articlesHTML = '';
+                let currentIndex = 0;
+                const totalArticles = Math.min(articles.length, 30);
+                
+                // Dos filas de 5 artículos (10 en total)
+                for (let row = 0; row < 2 && currentIndex < totalArticles; row++) {
+                    articlesHTML += '<div class="special-row">';
+                    for (let i = 0; i < 5 && currentIndex < totalArticles; i++) {
+                        const article = articles[currentIndex];
+                        const borderColor = BORDER_COLORS[currentIndex % BORDER_COLORS.length];
+                        const fullUrl = `${BASE_URL}${article.permalink}`;
+                        
+                        articlesHTML += `
+                            <div class="special-col-5">
+                                <a href="${fullUrl}" class="special-link">
+                                    <div class="special-card" style="border: 3px solid ${borderColor}">
+                                        <img src="${article.image}" alt="${article.title}" class="special-img" onerror="this.src='https://via.placeholder.com/640x360'">
+                                        <div class="special-info">
+                                            <span class="special-badge">2025</span>
+                                            <h3 class="special-title">${article.title}</h3>
+                                            <div class="special-meta">
+                                                <span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        `;
+                        currentIndex++;
+                    }
+                    articlesHTML += '</div>';
+                }
+                
+                // Dos filas de 3 artículos (6 en total)
+                for (let row = 0; row < 2 && currentIndex < totalArticles; row++) {
+                    articlesHTML += '<div class="special-row">';
+                    for (let i = 0; i < 3 && currentIndex < totalArticles; i++) {
+                        const article = articles[currentIndex];
+                        const borderColor = BORDER_COLORS[currentIndex % BORDER_COLORS.length];
+                        const fullUrl = `${BASE_URL}${article.permalink}`;
+                        
+                        articlesHTML += `
+                            <div class="special-col-3">
+                                <a href="${fullUrl}" class="special-link">
+                                    <div class="special-card" style="border: 3px solid ${borderColor}">
+                                        <img src="${article.image}" alt="${article.title}" class="special-img" onerror="this.src='https://via.placeholder.com/640x360'">
+                                        <div class="special-info">
+                                            <span class="special-badge">2025</span>
+                                            <h3 class="special-title">${article.title}</h3>
+                                            <div class="special-meta">
+                                                <span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        `;
+                        currentIndex++;
+                    }
+                    articlesHTML += '</div>';
+                }
+                
+                // Filas restantes de 4 artículos cada una
+                while (currentIndex < totalArticles) {
+                    articlesHTML += '<div class="special-row">';
+                    for (let i = 0; i < 4 && currentIndex < totalArticles; i++) {
+                        const article = articles[currentIndex];
+                        const borderColor = BORDER_COLORS[currentIndex % BORDER_COLORS.length];
+                        const fullUrl = `${BASE_URL}${article.permalink}`;
+                        
+                        articlesHTML += `
+                            <div class="special-col-4">
+                                <a href="${fullUrl}" class="special-link">
+                                    <div class="special-card" style="border: 3px solid ${borderColor}">
+                                        <img src="${article.image}" alt="${article.title}" class="special-img" onerror="this.src='https://via.placeholder.com/640x360'">
+                                        <div class="special-info">
+                                            <span class="special-badge">2025</span>
+                                            <h3 class="special-title">${article.title}</h3>
+                                            <div class="special-meta">
+                                                <span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        `;
+                        currentIndex++;
+                    }
+                    articlesHTML += '</div>';
+                }
+                
+                articlesContainer.innerHTML = articlesHTML;
+            }
+            
+            // Verificar que Supabase está disponible
+            if (typeof supabase === 'undefined') {
+                showError('La biblioteca de Supabase no se cargó correctamente.');
+                return;
+            }
+            
+            try {
+                // Versión más reciente de la API de Supabase
+                const { createClient } = supabase;
+                const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                
+                // Consulta async/await para mejor manejo de errores
+                (async function() {
+                    try {
+                        console.log('Iniciando consulta a Supabase para artículos de categoría Especial...');
+                        
+                        // Obtener el ID de la categoría "Especial"
+                        const { data: categoriaData, error: categoriaError } = await supabaseClient
+                            .from('categorias')
+                            .select('id')
+                            .eq('name', 'Especial')
+                            .single();
+                            
+                        if (categoriaError) {
+                            throw new Error(`Error al obtener la categoría: ${categoriaError.message}`);
+                        }
+                        
+                        if (!categoriaData) {
+                            throw new Error('No se encontró la categoría "Especial"');
+                        }
+                        
+                        const categoriaId = categoriaData.id;
+                        
+                        // Obtener los IDs de artículos que tienen la categoría "Especial"
+                        const { data: relacionesData, error: relacionesError } = await supabaseClient
+                            .from('articulo_categoria')
+                            .select('articulo_id')
+                            .eq('categoria_id', categoriaId);
+                            
+                        if (relacionesError) {
+                            throw new Error(`Error al obtener relaciones: ${relacionesError.message}`);
+                        }
+                        
+                        if (!relacionesData || relacionesData.length === 0) {
+                            throw new Error('No hay artículos con la categoría "Especial"');
+                        }
+                        
+                        const articuloIds = relacionesData.map(rel => rel.articulo_id);
+                        
+                        // Obtener los artículos con los IDs obtenidos
+                        const { data: articulosData, error: articulosError } = await supabaseClient
+                            .from('articulos')
+                            .select('id, title, permalink, image')
+                            .in('id', articuloIds)
+                            .order('id', { ascending: false })
+                            .limit(30);
+                            
+                        if (articulosError) {
+                            throw new Error(`Error al obtener artículos: ${articulosError.message}`);
+                        }
+                        
+                        console.log('Datos recibidos:', articulosData);
+                        displayArticles(articulosData);
+                    } catch (err) {
+                        showError(`No se pudieron cargar los artículos: ${err.message}`);
+                        console.error('Error completo:', err);
+                    }
+                })();
+                
+            } catch (err) {
+                showError(`Error al inicializar Supabase: ${err.message}`);
+                console.error('Error completo:', err);
+            }
+        });
+    </script>
+</body>
+</html>
