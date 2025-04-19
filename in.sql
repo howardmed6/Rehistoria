@@ -12,27 +12,31 @@ INSERT INTO articulos (
   alt_text, 
   content
 ) VALUES (
-  'post',
-  'La revolución invisible: cómo la teoría de cuerdas ha transformado la física moderna',
-  'revolucion-teoria-cuerdas',
+  'none',
+  'La formación de la Tierra, el Precámbrico y los primeros signos de vida',
+  '/la-formacion-de-la-tierra-precambrico-y-primeros-signos-de-vida/',
   'Howard Medina',
   '2025-04-18',
-  'https://upload.wikimedia.org/wikipedia/commons/d/d4/Calabi-Yau.png',
-  'Exploración de la teoría de cuerdas y su impacto en la física teórica contemporánea.',
-  'Teoría de cuerdas: qué es y por qué revoluciona la física | Rehistoria',
-  'Guía completa sobre teoría de cuerdas: desde sus fundamentos hasta cómo unifica la relatividad y la mecánica cuántica. Explicación con ejemplos visuales.', -- 156 caracteres (óptimo para SEO)
-  'Diagrama 3D de una variedad Calabi-Yau, estructura matemática usada en teoría de cuerdas',
+  'https://upload.wikimedia.org/wikipedia/commons/7/73/LithosphereAndAsthenosphere.jpg',
+  'Un recorrido por la formación de nuestro planeta, desde el polvo estelar hasta los primeros organismos vivos durante el Precámbrico.',
+  'La formación de la Tierra y primeros signos de vida | Relatatoria',
+  'Descubre cómo se formó la Tierra a partir del polvo cósmico, la evolución durante el Precámbrico y la aparición de los primeros organismos vivos hace millones de años.',
+  'Representación de la formación de la Tierra primitiva',
   'Contenido completo del artículo aquí...'
 );
 
--- Pasos 2 y 3 (categorías) se mantienen igual que antes
-INSERT INTO categorias (name) VALUES ('Noticias'), ('Ciencias'), ('Especial') ON CONFLICT (name) DO NOTHING;
+-- Paso 2: Insertar categorías si no existen
+INSERT INTO categorias (name) VALUES ('Ciencia'), ('Historia'), ('Especial') ON CONFLICT (name) DO NOTHING;
 
+-- Paso 3: Relacionar el artículo con sus categorías
 INSERT INTO articulo_categoria (articulo_id, categoria_id)
 VALUES (
-  (SELECT id FROM articulos WHERE slug = 'revolucion-teoria-cuerdas'),
-  (SELECT id FROM categorias WHERE name = 'Ciencias')
+  (SELECT id FROM articulos WHERE permalink = '/la-formacion-de-la-tierra-precambrico-y-primeros-signos-de-vida/'),
+  (SELECT id FROM categorias WHERE name = 'Ciencia')
 ), (
-  (SELECT id FROM articulos WHERE slug = 'revolucion-teoria-cuerdas'),
+  (SELECT id FROM articulos WHERE permalink = '/la-formacion-de-la-tierra-precambrico-y-primeros-signos-de-vida/'),
+  (SELECT id FROM categorias WHERE name = 'Historia')
+), (
+  (SELECT id FROM articulos WHERE permalink = '/la-formacion-de-la-tierra-precambrico-y-primeros-signos-de-vida/'),
   (SELECT id FROM categorias WHERE name = 'Especial')
 );
