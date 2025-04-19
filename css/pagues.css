@@ -1,10 +1,19 @@
 
 /* Estilos específicos para la sección de artículos especiales */
+
+body {
+    visibility: hidden;
+  }
+  body.loaded {
+    visibility: visible;
+  }
+  
 .special-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 15px;
 }
+
 
 .delagorer {
     height: 40px;
