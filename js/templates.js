@@ -1,9 +1,9 @@
-/* component-loader.js */
-// Asegúrate de definir BASE_PATH antes de usarlo
+/* component-loader.js - Versión combinada */
+// Definimos BASE_PATH si no existe
 const BASE_PATH = window.BASE_PATH || '';
 
 /**
- * Carga un CSS de forma asíncrona en un target (document.head o shadowRoot)
+ * Carga un CSS con prioridad en el documento o en un shadowRoot
  */
 const loadCSS = (href, targetRoot = document.head) => {
   return new Promise((resolve, reject) => {
@@ -11,97 +11,222 @@ const loadCSS = (href, targetRoot = document.head) => {
       ? href
       : `${BASE_PATH}${href.startsWith('/') ? '' : '/'}${href}`;
 
+    // Verificar si ya está cargado
     if (targetRoot.querySelector(`link[href="${fullHref}"]`)) {
       resolve();
       return;
     }
 
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = fullHref;
-    link.onload = () => resolve();
-    link.onerror = () => reject(new Error(`No se pudo cargar el CSS: ${fullHref}`));
-    targetRoot.appendChild(link);
+    // Para CSS que no son de frameworks externos, usamos !important
+    if (!fullHref.includes('bootstrap') && 
+        !fullHref.includes('fontawesome') && 
+        !fullHref.includes('cdnjs')) {
+      
+      // En lugar de cargar el link normal, hacemos fetch y modificamos
+      fetch(fullHref)
+        .then(response => {
+          if (!response.ok) throw new Error(`No se pudo cargar el CSS: ${fullHref}`);
+          return response.text();
+        })
+        .then(cssText => {
+          // Agregar !important a todas las propiedades
+          const modifiedCSS = cssText.replace(/([^{:]+)(:[^;!]+)(;|$)/g, "$1$2 !important$3");
+          
+          // Crear una etiqueta style en lugar de link
+          const style = document.createElement('style');
+          style.setAttribute('data-source', fullHref);
+          style.textContent = modifiedCSS;
+          
+          // Agregar al target (document.head o shadowRoot)
+          targetRoot.appendChild(style);
+          resolve();
+        })
+        .catch(err => {
+          console.error('Error al cargar y modificar CSS:', err);
+          reject(err);
+        });
+    } else {
+      // Para CSS de frameworks, cargamos normalmente
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = fullHref;
+      link.onload = () => resolve();
+      link.onerror = () => reject(new Error(`No se pudo cargar el CSS: ${fullHref}`));
+      targetRoot.appendChild(link);
+    }
   });
 };
 
 /**
- * Evalúa contenido de script en línea en el contexto global
+ * Evalúa contenido de script en línea en el contexto adecuado
  */
-const evalInlineScript = (scriptContent) => {
+const evalInlineScript = (scriptContent, component = null) => {
   try {
-    new Function(scriptContent)();
+    if (component) {
+      // Crear una función que tenga acceso al componente y helper functions
+      const scriptFunction = new Function('component', `
+        // Helpers para acceder a elementos dentro del componente
+        const getElementById = (id) => component.querySelector('#' + id);
+        const querySelector = (selector) => component.querySelector(selector);
+        const querySelectorAll = (selector) => component.querySelectorAll(selector);
+        
+        // El script original
+        ${scriptContent}
+      `);
+      
+      // Ejecutar la función con el componente como argumento
+      scriptFunction(component);
+    } else {
+      // Script global normal
+      new Function(scriptContent)();
+    }
   } catch (error) {
     console.error('Error evaluando script en línea:', error);
+    console.error('Contenido con error:', scriptContent.substring(0, 150) + '...');
   }
 };
 
 /**
  * Carga un <script> (externo o en línea) y espera a que termine
  */
-const loadScript = (scriptElement) => {
+const loadScript = (scriptElement, component = null) => {
   return new Promise((resolve) => {
     const src = scriptElement.getAttribute('src') || scriptElement.src;
+    
     if (src) {
-      const newScript = document.createElement('script');
-      Array.from(scriptElement.attributes).forEach(attr => {
-        newScript.setAttribute(attr.name, attr.value);
-      });
-      if (newScript.src && !newScript.src.startsWith('http') && !newScript.src.startsWith('//')) {
-        const relative = scriptElement.getAttribute('src');
-        newScript.src = `${BASE_PATH}${relative.startsWith('/') ? '' : '/'}${relative}`;
+      // Script externo
+      const fullSrc = src.startsWith('http') || src.startsWith('//')
+        ? src
+        : `${BASE_PATH}${src.startsWith('/') ? '' : '/'}${src}`;
+      
+      if (component) {
+        // Para scripts externos en componentes, hacemos fetch y lo evaluamos
+        fetch(fullSrc)
+          .then(response => response.text())
+          .then(content => {
+            evalInlineScript(content, component);
+            resolve();
+          })
+          .catch(error => {
+            console.error('Error cargando script externo para componente:', error);
+            resolve();
+          });
+      } else {
+        // Script normal para el documento
+        const newScript = document.createElement('script');
+        Array.from(scriptElement.attributes).forEach(attr => {
+          newScript.setAttribute(attr.name, attr.value);
+        });
+        
+        newScript.src = fullSrc;
+        newScript.onload = resolve;
+        newScript.onerror = () => {
+          console.error('Error cargando script:', fullSrc);
+          resolve();
+        };
+        document.body.appendChild(newScript);
       }
-      newScript.onload = resolve;
-      newScript.onerror = resolve;
-      document.body.appendChild(newScript);
     } else {
-      evalInlineScript(scriptElement.textContent);
+      // Script en línea
+      evalInlineScript(scriptElement.textContent, component);
       setTimeout(resolve, 0);
     }
   });
 };
 
 /**
- * Carga primero todos los <link> y luego los <script> de un template
+ * Procesa scripts específicamente para el menú de navegación
  */
-const loadComponentResources = async (componentElement) => {
-  try {
-    // Target = shadowRoot si existe, sino document.head
-    const targetRoot = componentElement.shadowRoot || document.head;
-
-    // Cargar estilos
-    const styles = componentElement.querySelectorAll('link[rel="stylesheet"]');
-    const stylePromises = Array.from(styles).map(link =>
-      loadCSS(link.getAttribute('href'), targetRoot)
-    );
-    await Promise.all(stylePromises);
-
-    // Cargar scripts en orden
-    const scripts = componentElement.querySelectorAll('script');
-    for (const script of Array.from(scripts)) {
-      await loadScript(script);
-    }
-  } catch (error) {
-    console.error('Error cargando recursos del componente:', error);
+const setupNavigationMenu = (component) => {
+  // Activar el menú móvil
+  const menuToggle = component.querySelector('#menuToggle');
+  const mainMenu = component.querySelector('#mainMenu');
+  
+  if (menuToggle && mainMenu) {
+    menuToggle.addEventListener('click', function() {
+      mainMenu.classList.toggle('active');
+    });
+  }
+  
+  // Activar el comportamiento sticky
+  const navWrapper = component.querySelector('#navWrapper56');
+  const mainNav = component.querySelector('#mainNav');
+  
+  if (navWrapper && mainNav) {
+    // Función para manejar el scroll
+    const handleScroll = function() {
+      const navPosition = navWrapper.getBoundingClientRect().top;
+      
+      if (navPosition <= 0) {
+        mainNav.classList.add('sticky');
+      } else {
+        mainNav.classList.remove('sticky');
+      }
+    };
+    
+    // Inicializar al cargar
+    handleScroll();
+    
+    // Agregar event listener
+    window.addEventListener('scroll', handleScroll);
   }
 };
 
 /**
- * Inserta contenido clonado (template.content) en el elemento (puede ser shadowRoot)
+ * Inserta contenido clonado en el elemento y procesa recursos
  */
 const processComponent = async (element, templateContent) => {
-  const root = element.shadowRoot || element;
-  root.innerHTML = '';
-  const clone = templateContent.cloneNode(true);
-  root.appendChild(clone);
+  try {
+    // Limpiar el elemento
+    element.innerHTML = '';
+    
+    // Clonar el contenido
+    const clone = templateContent.cloneNode(true);
+    
+    // 1. Primero cargar los estilos
+    const styles = clone.querySelectorAll('link[rel="stylesheet"]');
+    const stylePromises = Array.from(styles).map(link =>
+      loadCSS(link.getAttribute('href'), element)
+    );
+    await Promise.all(stylePromises);
+    
+    // 2. Insertar el contenido clonado
+    element.appendChild(clone);
+    
+    // 3. Procesar scripts
+    const scripts = element.querySelectorAll('script');
+    for (const script of Array.from(scripts)) {
+      await loadScript(script, element);
+      
+      // Opcional: remover script después de ejecutar para evitar duplicados
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    }
+    
+    // 4. Setup específico para navegación si existe
+    if (element.querySelector('.navigationnav23')) {
+      setupNavigationMenu(element);
+    }
+    
+    // 5. Disparar evento de componente cargado
+    element.dispatchEvent(new CustomEvent('component-loaded', { 
+      bubbles: true, 
+      detail: { component: element } 
+    }));
+  } catch (error) {
+    console.error('Error procesando componente:', error);
+    element.innerHTML = '<div>Error al cargar el componente</div>';
+  }
 };
 
 /**
- * Componente <site-head> aislado con Shadow DOM
+ * Componente <site-head>
  */
 class SiteHead extends HTMLElement {
   constructor() {
     super();
+    // Usamos shadowRoot para mayor aislamiento
     this.attachShadow({ mode: 'open' });
   }
 
@@ -113,8 +238,7 @@ class SiteHead extends HTMLElement {
       const html = await response.text();
       const template = document.createElement('template');
       template.innerHTML = html;
-      await loadComponentResources(template.content);
-      await processComponent(this, template.content);
+      await processComponent(this.shadowRoot, template.content);
     } catch (error) {
       console.error('Error cargando el encabezado:', error);
       this.shadowRoot.innerHTML = '<div>Error al cargar el encabezado</div>';
@@ -123,7 +247,7 @@ class SiteHead extends HTMLElement {
 }
 
 /**
- * Componente <site-footer> aislado con Shadow DOM
+ * Componente <site-footer>
  */
 class SiteFooter extends HTMLElement {
   constructor() {
@@ -139,8 +263,7 @@ class SiteFooter extends HTMLElement {
       const html = await response.text();
       const template = document.createElement('template');
       template.innerHTML = html;
-      await loadComponentResources(template.content);
-      await processComponent(this, template.content);
+      await processComponent(this.shadowRoot, template.content);
     } catch (error) {
       console.error('Error cargando el pie de página:', error);
       this.shadowRoot.innerHTML = '<div>Error al cargar el pie de página</div>';
@@ -149,7 +272,7 @@ class SiteFooter extends HTMLElement {
 }
 
 /**
- * Componente <html-include src="..."> aislado con Shadow DOM
+ * Componente <html-include src="...">
  */
 class HTMLInclude extends HTMLElement {
   constructor() {
@@ -167,8 +290,7 @@ class HTMLInclude extends HTMLElement {
       const html = await response.text();
       const template = document.createElement('template');
       template.innerHTML = html;
-      await loadComponentResources(template.content);
-      await processComponent(this, template.content);
+      await processComponent(this.shadowRoot, template.content);
     } catch (error) {
       console.error('Error cargando incluido HTML:', error);
       this.shadowRoot.innerHTML = '<div>Error al cargar el contenido</div>';
