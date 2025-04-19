@@ -1,0 +1,132 @@
+
+/* Estilos específicos para la sección de artículos especiales */
+.special-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.special-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+    margin-bottom: 15px;
+}
+
+.special-col-5 {
+    flex: 0 0 20%;
+    max-width: 20%;
+    padding: 0 15px;
+    margin-bottom: 30px;
+}
+
+.special-col-4 {
+    flex: 0 0 25%;
+    max-width: 25%;
+    padding: 0 15px;
+    margin-bottom: 30px;
+}
+
+.special-col-3 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+    padding: 0 15px;
+    margin-bottom: 30px;
+}
+
+.special-card {
+    border-radius: 8px;
+    overflow: hidden;
+    height: 100%;
+    transition: transform 0.3s;
+    background: white;
+}
+
+.special-card:hover {
+    transform: translateY(-5px);
+}
+
+.special-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.special-info {
+    padding: 15px;
+}
+
+.special-badge {
+    font-size: 12px;
+    color: #1a73e8;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.special-title {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 8px;
+    min-height: 70px;
+}
+
+.special-meta {
+    font-size: 12px;
+    color: #777;
+    display: flex;
+    align-items: center;
+}
+
+.special-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.special-loader {
+    text-align: center;
+    padding: 50px;
+    font-size: 20px;
+}
+
+.special-error {
+    text-align: center;
+    padding: 30px;
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+/* Estilos responsivos */
+@media (max-width: 992px) {
+    .special-col-5, .special-col-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+}
+
+@media (max-width: 768px) {
+    .special-col-5, .special-col-4, .special-col-3 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    
+    .special-title {
+        min-height: auto;
+    }
+    
+    .special-img {
+        height: 160px;
+    }
+}
+
+@media (max-width: 576px) {
+    .special-col-5, .special-col-4, .special-col-3 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
