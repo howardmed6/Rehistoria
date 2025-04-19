@@ -6,6 +6,9 @@
     padding: 0 15px;
 }
 
+.delagorer {
+    height: 40px;
+}
 .special-row {
     display: flex;
     flex-wrap: wrap;
