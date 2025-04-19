@@ -1,88 +1,141 @@
-<!-- Actualiza la importación de Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const articlesContainer = document.getElementById('articles-container');
-        
-        // Configuración de Supabase
-        const SUPABASE_URL = 'https://hkvkwwxwrkxckmxmvcdl.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhrdmt3d3h3cmt4Y2tteG12Y2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ5MDg3MjIsImV4cCI6MjA2MDQ4NDcyMn0.dxOFrOk5GhGJnypRN7TtMcue2TbG-KchsF8WMTVAWNM';
-        
-        try {
-            console.log('Inicializando Supabase...');
-            // Usa createClient correctamente
-            const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/image/icon.png" type="image/x-icon">
+    <script type="module" src="/js/templates.js"></script>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>REHISTORIA - Reescribimos la información</title>
+</head>
+<site-head></site-head>
+<body>
+    <div class="partop"></div>
+    
+    <!-- Main Content -->
+    <main class="container">
+        <div class="row" id="articles-container">
+            <div class="loader">Cargando artículos...</div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const articlesContainer = document.getElementById('articles-container');
+            const BASE_URL = 'https://www.rehistoria.com';
+            const BORDER_COLORS = [
+                '#FF5733', // Rojo
+                '#33A1FF', // Azul
+                '#33FF57', // Verde
+                '#FF33D1', // Rosa
+                '#FFC233', // Amarillo
+                '#9B33FF', // Morado
+                '#33FFE6', // Turquesa
+                '#FF9633', // Naranja
+                '#4B3300', // Marrón
+                '#666666', // Gris
+                '#5E2D0C', // Marrón oscuro
+                '#1A5276'  // Azul oscuro
+            ];
             
-            console.log('Cliente creado, intentando consulta...');
+            // Configuración de Supabase
+            const SUPABASE_URL = 'https://hkvkwwxwrkxckmxmvcdl.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhrdmt3d3h3cmt4Y2tteG12Y2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ5MDg3MjIsImV4cCI6MjA2MDQ4NDcyMn0.dxOFrOk5GhGJnypRN7TtMcue2TbG-KchsF8WMTVAWNM';
             
-            // Función para mostrar artículos
+            // Función para mostrar errores
+            function showError(message) {
+                articlesContainer.innerHTML = `
+                    <div class="col-12">
+                        <div class="error-message">
+                            Error: ${message}
+                        </div>
+                    </div>
+                `;
+                console.error('Error:', message);
+            }
+            
+            // Función para mostrar los artículos
             function displayArticles(articles) {
                 if (!articles || articles.length === 0) {
-                    articlesContainer.innerHTML = '<div class="col-12"><div class="error-message">No se encontraron artículos disponibles.</div></div>';
+                    articlesContainer.innerHTML = `
+                        <div class="col-12">
+                            <div class="error-message">
+                                No se encontraron artículos disponibles.
+                            </div>
+                        </div>
+                    `;
                     return;
                 }
                 
                 let articlesHTML = '';
-                const domain = 'https://www.rehistoria.com';
                 
-                articles.forEach(article => {
-                    const fullUrl = article.permalink.startsWith('http') ? article.permalink : `${domain}${article.permalink}`;
+                articles.forEach((article, index) => {
+                    // Usar colores de borde cíclicamente
+                    const borderColor = BORDER_COLORS[index % BORDER_COLORS.length];
+                    const fullUrl = `${BASE_URL}${article.permalink}`;
+                    
                     articlesHTML += `
-                        <div class="col-md-4 col-sm-6 mb-4">
-                            <a href="${fullUrl}" class="article-card-link">
-                                <div class="article-card">
-                                    <img src="${article.image}" alt="${article.title}" class="article-img" onerror="this.src='https://via.placeholder.com/640x360'">
-                                    <div class="article-info">
-                                        <span class="category-badge">Artículo</span>
-                                        <h3 class="article-title">${article.title}</h3>
-                                        <div class="article-meta">
-                                            <span>Por INFCAB</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    `;
+    <div class="col-md-4 col-sm-6 mb-4">
+        <a href="${fullUrl}" class="article-card-link">
+            <div class="article-card" style="border: 3px solid ${borderColor}">
+                <img src="${article.image}" alt="${article.title}" class="article-img" onerror="this.src='https://via.placeholder.com/640x360'">
+                <div class="article-info">
+                    <span class="category-badge">2025</span>
+                    <h3 class="article-title">${article.title}</h3>
+                    <div class="article-meta">
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+`;
                 });
                 
                 articlesContainer.innerHTML = articlesHTML;
             }
             
-            // Consulta los artículos
-            supabaseClient
-                .from('articulos')
-                .select('id, title, permalink, image')
-                .order('id', { ascending: false })
-                .limit(30)
-                .then(response => {
-                    console.log('Respuesta completa:', response);
-                    if (response.error) {
-                        throw new Error(`Error de Supabase: ${response.error.message}`);
-                    }
-                    
-                    console.log('Datos recibidos:', response.data);
-                    displayArticles(response.data);
-                })
-                .catch(err => {
-                    console.error('Error en la consulta:', err);
-                    articlesContainer.innerHTML = `
-                        <div class="col-12">
-                            <div class="error-message">
-                                Error al cargar artículos: ${err.message}
-                            </div>
-                        </div>
-                    `;
-                });
+            // Verificar que Supabase está disponible
+            if (typeof supabase === 'undefined') {
+                showError('La biblioteca de Supabase no se cargó correctamente.');
+                return;
+            }
+            
+            try {
+                // Versión más reciente de la API de Supabase
+                const { createClient } = supabase;
+                const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                 
-        } catch (err) {
-            console.error('Error de inicialización:', err);
-            articlesContainer.innerHTML = `
-                <div class="col-12">
-                    <div class="error-message">
-                        Error al inicializar: ${err.message}
-                    </div>
-                </div>
-            `;
-        }
-    });
-</script>
+                // Consulta async/await para mejor manejo de errores
+                (async function() {
+                    try {
+                        console.log('Iniciando consulta a Supabase...');
+                        
+                        const { data, error } = await supabaseClient
+                            .from('articulos')
+                            .select('id, title, permalink, image')
+                            .order('id', { ascending: false });
+                        
+                        if (error) {
+                            throw new Error(error.message);
+                        }
+                        
+                        console.log('Datos recibidos:', data);
+                        displayArticles(data);
+                    } catch (err) {
+                        showError(`No se pudieron cargar los artículos: ${err.message}`);
+                        console.error('Error completo:', err);
+                    }
+                })();
+                
+            } catch (err) {
+                showError(`Error al inicializar Supabase: ${err.message}`);
+                console.error('Error completo:', err);
+            }
+        });
+    </script>
+    
+    <site-footer></site-footer>
+</body>
+</html>
