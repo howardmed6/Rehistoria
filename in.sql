@@ -13,15 +13,15 @@ INSERT INTO articulos (
   content
 ) VALUES (
   'none',
-  'La formación de la Tierra, el Precámbrico y los primeros signos de vida',
-  '/la-formacion-de-la-tierra-precambrico-y-primeros-signos-de-vida/',
+  'La formación de la Tierra, eón Fanerozoico: la era Mesozoica y las especies del Periodo Triásico, Jurásico y Cretácico',
+  '/la-formacion-de-la-tierra-fanerozoico-era-mesozoica-especies-triasico-jurasico-cretacico/',
   'Howard Medina',
   '2025-04-18',
-  'https://upload.wikimedia.org/wikipedia/commons/7/73/LithosphereAndAsthenosphere.jpg',
-  'Un recorrido por la formación de nuestro planeta, desde el polvo estelar hasta los primeros organismos vivos durante el Precámbrico.',
-  'La formación de la Tierra y primeros signos de vida | Relatatoria',
-  'Descubre cómo se formó la Tierra a partir del polvo cósmico, la evolución durante el Precámbrico y la aparición de los primeros organismos vivos hace millones de años.',
-  'Representación de la formación de la Tierra primitiva',
+  'https://res.cloudinary.com/dpj17zdr2/image/upload/v1745024251/66003874-siluetas-de-dinosaurios-del-periodo-cretacico-de-la-era-mesozoica-con-nombres_gygkty.jpg',
+  'Un recorrido por la era Mesozoica, desde los primeros dinosaurios del Triásico hasta la gran extinción que marcó el fin del Cretácico.',
+  'El eón Fanerozoico y la era Mesozoica: el dominio de los dinosaurios | Relatatoria',
+  'Descubre cómo evolucionaron y dominaron los dinosaurios durante la era Mesozoica, desde los primeros arcosaurios hasta la extinción masiva causada por el impacto del meteorito hace 65 millones de años.',
+  'Representación de la vida durante la era Mesozoica',
   'Contenido completo del artículo aquí...'
 );
 
@@ -31,12 +31,12 @@ INSERT INTO categorias (name) VALUES ('Ciencia'), ('Historia'), ('Especial') ON 
 -- Paso 3: Relacionar el artículo con sus categorías
 INSERT INTO articulo_categoria (articulo_id, categoria_id)
 VALUES (
-  (SELECT id FROM articulos WHERE permalink = '/la-formacion-de-la-tierra-precambrico-y-primeros-signos-de-vida/'),
+  (SELECT id FROM articulos WHERE permalink = '/la-formacion-de-la-tierra-fanerozoico-era-mesozoica-especies-triasico-jurasico-cretacico/'),
   (SELECT id FROM categorias WHERE name = 'Ciencia')
 ), (
-  (SELECT id FROM articulos WHERE permalink = '/la-formacion-de-la-tierra-precambrico-y-primeros-signos-de-vida/'),
+  (SELECT id FROM articulos WHERE permalink = '/la-formacion-de-la-tierra-fanerozoico-era-mesozoica-especies-triasico-jurasico-cretacico/'),
   (SELECT id FROM categorias WHERE name = 'Historia')
 ), (
-  (SELECT id FROM articulos WHERE permalink = '/la-formacion-de-la-tierra-precambrico-y-primeros-signos-de-vida/'),
+  (SELECT id FROM articulos WHERE permalink = '/la-formacion-de-la-tierra-fanerozoico-era-mesozoica-especies-triasico-jurasico-cretacico/'),
   (SELECT id FROM categorias WHERE name = 'Especial')
 );
