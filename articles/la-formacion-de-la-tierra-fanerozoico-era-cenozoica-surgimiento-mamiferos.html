@@ -23,9 +23,10 @@ alt_text: "Representación de la vida durante la era Cenozoica"
   
   </head>
 
-<site-head></site-head>
 
 <body>
+  <site-head></site-head>
+
   <div class="page-container">
     <div class="sidebarnorte">
       
@@ -156,8 +157,15 @@ alt_text: "Representación de la vida durante la era Cenozoica"
       </div>
     </div>
   </div>
+  <site-footer></site-footer> 
+  <script>
+    window.addEventListener('load', () => {
+      document.body.classList.add('loaded');
+    });
+  </script>
+  
 </body>
 
-<site-footer></site-footer>
+
 
 </html>

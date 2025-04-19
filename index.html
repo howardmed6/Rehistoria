@@ -12,11 +12,16 @@
     <title>REHISTORIA - Reescribimos la información</title>
     <style>
         /* Estilos básicos para el sitio */
-body {
+        body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f8f9fa;
-    padding: 0 0;
+   padding: 0 0;
+   visibility: hidden;
 }
+body.loaded {
+    visibility: visible;
+  }
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -133,8 +138,9 @@ a {
 }
     </style>
 </head>
-<site-head></site-head>
 <body>
+    <site-head></site-head>
+
     <div class="partop"></div>
     
     <!-- Main Content -->
@@ -259,7 +265,12 @@ a {
             }
         });
     </script>
-    
-    <site-footer></site-footer>
+    <site-footer></site-footer> 
+  <script>
+    window.addEventListener('load', () => {
+      document.body.classList.add('loaded');
+    });
+  </script>
+  
 </body>
 </html>
