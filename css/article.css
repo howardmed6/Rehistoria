@@ -153,8 +153,8 @@ border-bottom: 0px solid #eaecef;}
   border-radius: 8px;
   text-decoration: none;
   font-size: 16px;
+  border-color: #000000 8px;
   font-weight: bold;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   animation: fadePop 0.5s ease-out;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
