@@ -77,12 +77,22 @@
             text-decoration: none;
             color: inherit;
         }
+        #status, #result {
+            margin: 20px 0;
+        }
     </style>
 </head>
-<site-head></site-head>
 <body>
-        <!-- Main Content -->
+    <site-head></site-head>
+    
+    <!-- Main Content -->
     <main class="container">
+        <!-- Estado de la conexión y prueba -->
+        <div id="status" class="mb-4">Verificando conexión con Supabase...</div>
+        <div id="result"></div>
+        
+        <!-- Contenedor de artículos -->
+        <h2 class="mb-4">Artículos recientes</h2>
         <div class="row" id="articles-container">
             <div class="loader">Cargando artículos...</div>
         </div>
@@ -95,8 +105,9 @@
             // Elementos del DOM
             const statusElement = document.getElementById('status');
             const resultElement = document.getElementById('result');
+            const articlesContainer = document.getElementById('articles-container');
             
-            // Configuración de Supabase - REEMPLAZA CON TUS CREDENCIALES
+            // Configuración de Supabase - Reemplaza con tus credenciales reales
             const SUPABASE_URL = 'https://hkvkwwxwrkxckmxmvcdl.supabase.co';
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhrdmt3d3h3cmt4Y2tteG12Y2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ5MDg3MjIsImV4cCI6MjA2MDQ4NDcyMn0.dxOFrOk5GhGJnypRN7TtMcue2TbG-KchsF8WMTVAWNM';
             
@@ -105,17 +116,39 @@
                 statusElement.innerHTML = `<div class="alert alert-danger">Error: ${message}</div>`;
             }
             
-            // Función para mostrar resultados
-            function showResult(data) {
-                resultElement.innerHTML = `
-                    <div class="alert alert-success">
-                        Conexión exitosa! Se encontraron ${data.length} artículos.
-                    </div>
-                    <div class="mt-3">
-                        <h5>Primeros 3 artículos:</h5>
-                        <pre>${JSON.stringify(data.slice(0, 3), null, 2)}</pre>
-                    </div>
-                `;
+            // Función para mostrar artículos
+            function displayArticles(articles) {
+                if (!articles || articles.length === 0) {
+                    articlesContainer.innerHTML = `
+                        <div class="error-message">
+                            No se encontraron artículos disponibles.
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let articlesHTML = '';
+                
+                articles.forEach(article => {
+                    articlesHTML += `
+                        <div class="col-md-4 col-sm-6 mb-4">
+                            <a href="${article.permalink}" class="article-card-link">
+                                <div class="article-card">
+                                    <img src="${article.image}" alt="${article.title}" class="article-img">
+                                    <div class="article-info">
+                                        <span class="category-badge">Artículo</span>
+                                        <h3 class="article-title">${article.title}</h3>
+                                        <div class="article-meta">
+                                            <span>Por INFCAB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    `;
+                });
+                
+                articlesContainer.innerHTML = articlesHTML;
             }
             
             // Verificar que Supabase está disponible
@@ -128,20 +161,29 @@
                 // Inicializar el cliente de Supabase
                 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                 
-                // Intentar una consulta simple
+                // Intentar una consulta simple para probar la conexión
                 statusElement.textContent = 'Consultando la base de datos...';
                 
                 supabaseClient
                     .from('articulos')
                     .select('id, title, permalink, image')
-                    .limit(10)
+                    .order('id', { ascending: false })
                     .then(response => {
                         if (response.error) {
                             showError(`Error en la consulta: ${response.error.message}`);
                             console.error('Error completo:', response.error);
                         } else {
                             statusElement.innerHTML = '<div class="alert alert-success">Conexión establecida correctamente.</div>';
-                            showResult(response.data || []);
+                            
+                            // Mostrar algunos datos de prueba
+                            resultElement.innerHTML = `
+                                <div class="alert alert-success">
+                                    Se encontraron ${response.data.length} artículos.
+                                </div>
+                            `;
+                            
+                            // Mostrar los artículos en la página
+                            displayArticles(response.data);
                         }
                     })
                     .catch(error => {
@@ -155,8 +197,7 @@
             }
         });
     </script>
+    
+    <site-footer></site-footer>
 </body>
-
-<site-footer></site-footer>
-
 </html>
